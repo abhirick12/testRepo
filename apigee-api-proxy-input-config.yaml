@@ -1,43 +1,53 @@
+# === MANDATORY Proxy Details Section ===#
 Proxy:
-  proxyName: multi-region-v1 # Proxy name, like accounts-v1 OR payments-v1 etc
-  proxyBasePath: /multi-region/test
-  virtualHosts: ep-secure-public # One or more than one vhosts can be registered using this section
-
-  # proxy base path , this is the base path of the proxy like /v1/customers, final URL of the proxy would be https://lbg-nonprod-build.apigee.net/v1/customers for build env
+  proxyName: hello1-v6 # Proxy name, like accounts-v1 OR payments-v1 etc
+  proxyBasePath: /v6/hello1 # proxy base path , this is the base path of the proxy like /v1/customers, final URL of the proxy would be https://lbg-nonprod-build.apigee.net/v1/customers for build env
+  virtualHosts: ep-secure-public # One or more than one vhosts can be registered using this section, vhost need to select for public and colleague (internal) api's  ep-secure-<<public/colleague>>
 
 # ==== MANDATORY TargetServer Section  ====#
 TargetServer: # Backend service details
+  names:
+    london: GCLB-ew2-Target
+    belgium: GCLB-ew1-Target
+  path: /json # path of the backend service , which will append after the host , like http://customer-build.com/v1/customers
+  serverUnhealthyResponse: 500, 502, 503, 400 #The maximum number of failed requests from the API proxy to the TargetServer that results in the request being redirected to another TargetServer
+  maxFailures: 5
+  healthMonitor:
+    enabled: true
+    path: /test # The path appended to the URL defined in the TargetServer. Use the path element to configure a 'polling endpoint' on your HTTP service.
 
-KVM: # Key Value Map, if we need to define any configuration value and later will be used in proxy run-time
+#=== NON-MANDATORY KVM Section  ===#
 
 #===  NON-MANDATORY Quota Section ===#
 Quota: # Setting Quota for the api proxy
   bld: # apigee environment name
-    allowedCount: 10000 # Specifies the count limit for the quota. If the counter for the policy reaches this limit value, subsequent calls are rejected until the counter resets.
+    allowedCount: 10 # Specifies the count limit for the quota. If the counter for the policy reaches this limit value, subsequent calls are rejected until the counter resets.
     interval: 1 # Use to specify an integer, which allowed count in interval
     timeUnit: minute # Use to specify the unit of time applicable to the quota. (minute, hour, day, week, or month)
   int-01: # apigee environment name
-    allowedCount: 10000 # Specifies the count limit for the quota. If the counter for the policy reaches this limit value, subsequent calls are rejected until the counter resets.
+    allowedCount: 10 # Specifies the count limit for the quota. If the counter for the policy reaches this limit value, subsequent calls are rejected until the counter resets.
     interval: 1 # Use to specify an integer, which allowed count in interval, 10 requests per 1 minute
     timeUnit: minute # Use to specify the unit of time applicable to the quota. (minute, hour, day, week, or month)
   int-02: # apigee environment name
-    allowedCount: 10000 # Specifies the count limit for the quota. If the counter for the policy reaches this limit value, subsequent calls are rejected until the counter resets.
+    allowedCount: 10 # Specifies the count limit for the quota. If the counter for the policy reaches this limit value, subsequent calls are rejected until the counter resets.
     interval: 1 # Use to specify an integer, which allowed count in interval, 10 requests per 1 minute
     timeUnit: minute # Use to specify the unit of time applicable to the quota. (minute, hour, day, week, or month)
   pre-01: # apigee environment name
-    allowedCount: 10000 # Specifies the count limit for the quota. If the counter for the policy reaches this limit value, subsequent calls are rejected until the counter resets.
+    allowedCount: 10 # Specifies the count limit for the quota. If the counter for the policy reaches this limit value, subsequent calls are rejected until the counter resets.
     interval: 1 # Use to specify an integer, which allowed count in interval, 10 requests per 1 minute
     timeUnit: minute # Use to specify the unit of time applicable to the quota. (minute, hour, day, week, or month)
   prd: # apigee environment name
-    allowedCount: 10000 # Specifies the count limit for the quota. If the counter for the policy reaches this limit value, subsequent calls are rejected until the counter resets.
+    allowedCount: 10 # Specifies the count limit for the quota. If the counter for the policy reaches this limit value, subsequent calls are rejected until the counter resets.
     interval: 1 # Use to specify an integer, which allowed count in interval, 10 requests per 1 minute
     timeUnit: minute # Use to specify the unit of time applicable to the quota. (minute, hour, day, week, or month)
 
+#===  NON-MANDATORY Policies Section ===#
 Policies: # policies name with the flag, false in case no need of the predefined optional policy in this proxy
 
 #===  MANDATORY Product Section ===#  ep-<<public/colleague>>-<<env>>-product
 Product: ep-public-{env}-product
 
+#===  NON-MANDATORY DataMaskConfig Section ===#
 DataMaskConfig: # Configuration for data masking in apigee trace
   requestPayload: # Data masking JSONPath for Request payload
     - $.username
@@ -46,3 +56,21 @@ DataMaskConfig: # Configuration for data masking in apigee trace
     - $.users[*].email
   variables: # Data masking variables (headers, formparameters, queryparameters)
     - request.header.confidentialheadername
+
+#===  NON-MANDATORY AllowedURIAndMethod Section ===#
+# This configuration helps in restricting API proxies in context of selective URI and HTTP Methods.
+# Any request which does not match the configured URI and HTTP Method should be blocked and an appropriate error message should be thrown back.
+AllowedURIAndMethod:
+  - URI: /v6/hello1/{helloid} # Allowed Request URI.
+    Methods: GET, POST # Allowed HTTP Method.
+    Authorize: true # Token validation enable/disbale on this URI
+  - URI: /v6/hello1/{helloid}/abc
+    Methods: GET
+    Authorize: true
+
+#===  NON-MANDATORY RouteRules Section ===#
+#To add dynamic routes in your proxy i.e. different targets for different uri, please use the below block.
+RouteRules:
+  - name: kyc-target # The name of your target
+    URI: /v6/hello1/{helloid}/kyc # The proxy path on which you want to redirect
+    targetBasePath: /v6/kycservice # The target base path on which you want to be redirected.
