@@ -1,0 +1,44 @@
+KVM:
+  bld:
+    - name: region-traffic-kvms
+      entry:
+        - name: multi-region-v1.london-region
+          value: 70
+        - name: multi-region-v1.belgium-region
+          value: 30
+  int-01:
+    - name: region-traffic-kvms
+      entry:
+        - name: multi-region-v1.london-region
+          value: 90
+        - name: multi-region-v1.belgium-region
+          value: 10
+  int-02:
+    - name: region-traffic-kvms
+      entry:
+        - name: multi-region-v1.london-region
+          value: 90
+        - name: multi-region-v1.belgium-region
+          value: 10
+  pre-01:
+    - name: region-traffic-kvms
+      entry:
+        - name: multi-region-v1.london-region
+          value: 90
+        - name: multi-region-v1.belgium-region
+          value: 10
+  pre-02:
+    - name: region-traffic-kvms
+      entry:
+        - name: multi-region-v1.london-region
+          value: 90
+        - name: multi-region-v1.belgium-region
+          value: 10
+  prd:
+    - name: region-traffic-kvms
+      entry:
+        - name: multi-region-v1.london-region
+          value: 90
+        - name: multi-region-v1.belgium-region
+          value: 10                                        
+  
