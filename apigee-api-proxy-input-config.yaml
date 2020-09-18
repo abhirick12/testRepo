@@ -1,0 +1,49 @@
+Proxy:
+  proxyName: multi-region-v1 # Proxy name, like accounts-v1 OR payments-v1 etc
+  proxyBasePath: /multi-region/v3.1/pisp
+  virtualHosts: ep-secure-public # One or more than one vhosts can be registered using this section
+
+  # proxy base path , this is the base path of the proxy like /v1/customers, final URL of the proxy would be https://lbg-nonprod-build.apigee.net/v1/customers for build env
+
+# ==== MANDATORY TargetServer Section  ====#
+TargetServer: # Backend service details
+  path: /open-banking/v3.1/pisp
+
+KVM: # Key Value Map, if we need to define any configuration value and later will be used in proxy run-time
+
+#===  NON-MANDATORY Quota Section ===#
+Quota: # Setting Quota for the api proxy
+  bld: # apigee environment name
+    allowedCount: 10000 # Specifies the count limit for the quota. If the counter for the policy reaches this limit value, subsequent calls are rejected until the counter resets.
+    interval: 1 # Use to specify an integer, which allowed count in interval
+    timeUnit: minute # Use to specify the unit of time applicable to the quota. (minute, hour, day, week, or month)
+  int-01: # apigee environment name
+    allowedCount: 10000 # Specifies the count limit for the quota. If the counter for the policy reaches this limit value, subsequent calls are rejected until the counter resets.
+    interval: 1 # Use to specify an integer, which allowed count in interval, 10 requests per 1 minute
+    timeUnit: minute # Use to specify the unit of time applicable to the quota. (minute, hour, day, week, or month)
+  int-02: # apigee environment name
+    allowedCount: 10000 # Specifies the count limit for the quota. If the counter for the policy reaches this limit value, subsequent calls are rejected until the counter resets.
+    interval: 1 # Use to specify an integer, which allowed count in interval, 10 requests per 1 minute
+    timeUnit: minute # Use to specify the unit of time applicable to the quota. (minute, hour, day, week, or month)
+  pre-01: # apigee environment name
+    allowedCount: 10000 # Specifies the count limit for the quota. If the counter for the policy reaches this limit value, subsequent calls are rejected until the counter resets.
+    interval: 1 # Use to specify an integer, which allowed count in interval, 10 requests per 1 minute
+    timeUnit: minute # Use to specify the unit of time applicable to the quota. (minute, hour, day, week, or month)
+  prd: # apigee environment name
+    allowedCount: 10000 # Specifies the count limit for the quota. If the counter for the policy reaches this limit value, subsequent calls are rejected until the counter resets.
+    interval: 1 # Use to specify an integer, which allowed count in interval, 10 requests per 1 minute
+    timeUnit: minute # Use to specify the unit of time applicable to the quota. (minute, hour, day, week, or month)
+
+Policies: # policies name with the flag, false in case no need of the predefined optional policy in this proxy
+
+#===  MANDATORY Product Section ===#  ep-<<public/colleague>>-<<env>>-product
+Product: ep-public-{env}-product
+
+DataMaskConfig: # Configuration for data masking in apigee trace
+  requestPayload: # Data masking JSONPath for Request payload
+    - $.username
+    - $.password
+  responsePayload: # Data masking JSONPath for Response payload
+    - $.users[*].email
+  variables: # Data masking variables (headers, formparameters, queryparameters)
+    - request.header.confidentialheadername
