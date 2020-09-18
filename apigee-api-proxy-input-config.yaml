@@ -1,13 +1,12 @@
 Proxy:
   proxyName: multi-region-v1 # Proxy name, like accounts-v1 OR payments-v1 etc
-  proxyBasePath: /multi-region/v3.1/pisp
+  proxyBasePath: /multi-region/test
   virtualHosts: ep-secure-public # One or more than one vhosts can be registered using this section
 
   # proxy base path , this is the base path of the proxy like /v1/customers, final URL of the proxy would be https://lbg-nonprod-build.apigee.net/v1/customers for build env
 
 # ==== MANDATORY TargetServer Section  ====#
 TargetServer: # Backend service details
-  path: /open-banking/v3.1/pisp
 
 KVM: # Key Value Map, if we need to define any configuration value and later will be used in proxy run-time
 
